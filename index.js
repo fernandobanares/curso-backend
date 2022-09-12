@@ -15,7 +15,7 @@ class persona {
     }
     
     countMascotas(){
-       return `Tengo ${this.mascotas.lenght} mascotas`;
+       return `Tengo ${this.mascotas.length} mascotas`;
     }
     
     addBook(titulo, autor){
@@ -32,14 +32,13 @@ class persona {
         this.libros.forEach(element => {
             arrayResult.push(element.nombre)
         });
-        return arrayResult
+        return `los libros que tengo son ${arrayResult}`
     }
-    
 }
 
 
 
-const usuario1 = new persona('Fernando', 'Bañares',{titulo:'Farenheit 451', autor:'Ray Bradbury'},['Luna','Diana'])
+const usuario1 = new persona('Fernando', 'Bañares',[{titulo:'Farenheit 451', autor:'Ray Bradbury'}],['Luna','Diana'])
 
 console.log(usuario1.getFullName());
 usuario1.addMascota('Totu');
@@ -47,6 +46,6 @@ console.log(usuario1.mascotas);
 console.log(usuario1.countMascotas());
 usuario1.addBook('Spiderman','Lucas');
 console.log(usuario1.libros);
-console.log(usuario1.getBookName());
+console.log(usuario1.getBookNames());
 console.log(usuario1.countBooks());
 
