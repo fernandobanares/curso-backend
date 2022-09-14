@@ -1,51 +1,73 @@
-class persona {
-    constructor (nombre, apellido, libros, mascotas){
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.libros = libros
-        this.mascotas = mascotas;
-    } 
-  
-    getFullName() {
-        return `El nombre de usuario es ${this.nombre} ${this.apellido}`;
-    }
-    
-    addMascota(){
-        this.mascotas.push();
-    }
-    
-    countMascotas(){
-       return `Tengo ${this.mascotas.length} mascotas`;
-    }
-    
-    addBook(titulo, autor){
-        const libro = {titulo: titulo,autor: autor}
-        this.libros.push(libro)
+const fs = require('fs');
+
+class Contenedor {
+    constructor (file){
+        this.file = file
     }
 
-    countBooks(){
-        return  `Tengo ${this.libros.length} libros`;
+    // recibe obj, lo transforma y lo guarda en archivo
+    async save(producto){
+        let contenido = await fs.promises.readFile (this.file)
+        let contObj = JSON.parse(contenido)
+        let newId
+        newId = contObj.length > 0 ? contObj.length + 1 : 1;
+        producto.id = newId;
+        contObj.push(producto)
+        await fs.promises.writeFile(this.file, JSON.stringify(contObj))
     }
-    
-    getBookNames(){
-        let arrayResult = []
-        this.libros.forEach(element => {
-            arrayResult.push(element.nombre)
-        });
-        return `los libros que tengo son ${arrayResult}`
+
+    // devuelve todos los objetos en el archivo
+    async getAll(){
+        let contenido = await fs.promises.readFile (this.file)
+        let contObj = JSON.parse(contenido)
+        return contObj
+    }
+
+    // en base al id devuelve el objeto que coincida
+    async getById(id){
+        let contObj = await this.getAll()
+        let resultado = contObj.find(obj => obj.id == id)
+        return resultado
+    }
+
+    async deleteById(id){
+        let contObj = await this.getAll()
+        let nuevoObj = contObj.filter(obj => obj.id !== id)
+        console.log(nuevoObj)
+        await fs.promises.writeFile(this.file, JSON.stringify(nuevoObj))
+    }
+
+    async deleteAll(){
+        await fs.promises.writeFile(this.file, "[]")
     }
 }
 
+let productos = new Contenedor('productos.txt')
+let carrito = new Contenedor('carrito.txt')
 
+let producto1 ={
+    "title":"titulo1",
+    "price":5000,
+    "thumbnail":"url1"
+}
+let producto2 ={
+    "title":"titulo1",
+    "price":10000,
+    "thumbnail":"url2"
+}
+let producto3 ={
+    "title":"titulo1",
+    "price":15000,
+    "thumbnail":"url3"
+}
 
-const usuario1 = new persona('Fernando', 'Bañares',[{titulo:'Farenheit 451', autor:'Ray Bradbury'}],['Luna','Diana'])
+const usarContenedor = async () => {
+    await productos.save(producto1)
+    await productos.save(producto2)
+    await productos.save(producto3)
 
-console.log(usuario1.getFullName());
-usuario1.addMascota('Totu');
-console.log(usuario1.mascotas);
-console.log(usuario1.countMascotas());
-usuario1.addBook('Spiderman','Lucas');
-console.log(usuario1.libros);
-console.log(usuario1.getBookNames());
-console.log(usuario1.countBooks());
-
+    await carrito.save(producto1)
+    await carrito.save(producto2)
+    await carrito.save(producto3)
+}
+// let idProducto1 = contenedor.save(producto1)
